@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+  <head>
+    <meta charset="utf-8">
+    <title>Projects</title>
+  </head>
+  <body>
+<h2>Project List</h2>
+	{% if obj %}
+		<table style="width:100%">
+		<tr>
+  		<th>Project</th>
+  		<th>Created Date</th>
+  		<th>Owner</th>
+  		<th>Survey ID</th>
+  		<th>Survey URL</th>
+		</tr>
+		{% for proj in obj %}
+		<tr>
+  		<td>{{ proj.project_name }}</td>
+  		<td>{{ proj.created_date }}</td>
+  		<td>{{ proj.owner_id }}</td>
+  		<td>{{ proj.survey_id }}</td>
+  		<td>{{ proj.survey_url }}</td>
+		</tr>
+		{% endfor %}
+		</table>
+	{% else %}
+    		<p>No project exists.</p>
+	{% endif %}
+  </body>
+</html>
+
+
