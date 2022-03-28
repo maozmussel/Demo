@@ -1,0 +1,30 @@
+<html>
+    <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+  <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css">
+    </head>
+    <body>
+<body>
+<form action="{% url 'generate_highcharts' %}" method="post">
+{% csrf_token %}
+<select name="Survey" id="Survey">  
+    <option value="4144303"> 4144303 </option>  
+    <option value="4156592"> 4156592 </option>  
+</select>
+<select name="Type" id="Type">  
+    <option value="pie"> Pie </option>  
+    <option value="line"> Line </option>  
+    <option value="bar"> Bar </option>  
+</select>
+<input type="submit" value="Submit">
+</form>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<div id="survey_container1" style="height: 300px"></div>
+<div id="survey_container2" style="height: 300px"></div>
+<div id="survey_container3" style="height: 300px"></div>
+<script type="module">
+	{{ charts | safe }}
+</script>
+   </body>
+</html>
