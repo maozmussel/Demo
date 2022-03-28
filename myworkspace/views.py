@@ -1,64 +1,97 @@
+import logging
 from django.http import HttpResponse
 from django.template import loader
 from django.http import Http404
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
+import pandas as pd
+from pandas_highcharts.core import serialize
 from .models import Project
-import csv
-import datetime
+from .constant import constant
+from .fetch_alchemer_to_csv import *
+from .upload_data_from_csv import *
+from .highcharts_create import *
 
+# define logging
+logging.basicConfig(level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s %(message)s',
+    filename=f"{constant.OUTPUT_DIR}/myworkspace.log",
+    filemode='w')
 
+@login_required
 def index(request):
-    latest_project_list = Project.objects.order_by('-project_name')[:5]
-    template = loader.get_template('myworkspace/index.html')
-    context = {
-        'latest_project_list': latest_project_list,
-    }
-    return HttpResponse(template.render(context, request))
-
-def detail(request, project_id):
-    try:
-        project = Project.objects.get(pk=project_id)
-    except Project.DoesNotExist:
-        raise Http404("Project does not exist")
-    return render(request, 'myworkspace/detail.html', {'project': project})
+    """app main page"""
+    return render(request, 'myworkspace/index.html')
 
 @login_required
 def projects(request):
+    """Display list of projects"""
     return render(request, 'myworkspace/project.tmpl', {'obj': Project.objects.all()})
 
+@login_required
+def project_details(request, project_id):
+    """Display project details based on the project id key.
+
+       Display content in page if the given is exists, 404 otherwise
+    """
+    try:
+        project = Project.objects.get(pk=project_id)
+        project.created_date = f"{project.created_date:%d-%m-%Y}"
+    except Project.DoesNotExist:
+        raise Http404("Project does not exist")
+    return render(request, 'myworkspace/project_details.tmpl', {'project': project})
+
+
 def is_member_in_group(user, group):
+    """Check if a user belongs to a gorup, return true if exist.
+
+       user - the reequest user identifier
+       group - the group name
+    """
     return user.groups.filter(name=group).exists()
 
 @login_required
+def fetch_data_form(request):
+    """Display form to fetch data from Alchemer"""
+    if (is_member_in_group(request.user, constant.ADMIN_GROUP_NAME)):
+        return render(request, 'myworkspace/fetch_data.tmpl')
+    else:
+        return HttpResponse("You do not have premissions for this operation.")
+
+@login_required
+def fetch_alchemer_data(request):
+    """Fetch data from Alchemer using REST API"""
+    # get form parameters - the output file name and the date range
+    file_name = request.POST['fname']
+    from_date = request.POST['fromdate']
+    to_date = request.POST['todate']
+    res = fetch_survey_data_into_csv(file_name, from_date, to_date)
+    if (res == "Success"):
+        return HttpResponse("Oprtation completed succesfully.")
+    else:
+        return HttpResponse(f"Oprtation failed: {res}.")
+
+
+@login_required
 def upload_project_form(request):
-    if (is_member_in_group(request.user, 'Admin Group')):
+    """Display form to upload project data from csv into the database """
+    if (is_member_in_group(request.user, constant.ADMIN_GROUP_NAME)):
         return render(request, 'myworkspace/upload_csv.tmpl')
     else:
-        return HttpResponse("You do not have premissions for this operation")
+        return HttpResponse("You do not have premissions for this operation.")
 
 def upload_projects_from_csv(request):
-    file_name=request.POST['fname']
-    try:
-        csv_file = open(file_name)
-    except (FileNotFoundError, IOError):
-        return HttpResponse("Wrong file or file path.")
-    with csv_file:
-        csvfile = csv.reader(csv_file, delimiter=',')
-        header = next(csvfile)
-        row_values = []
-        try:
-            for row in csvfile:
-                #row_values.append(row)
-                obj, created = Project.objects.update_or_create(
-                    project_name=row[0],
-                    created_date=datetime.datetime.strptime(row[1].strip(), '%Y-%m-%d %H:%M:%S').date(),
-                    survey_id=row[2],
-                    survey_url=row[3],
-                    survey_type=row[4],
-                )
-        except:
-            return HttpResponse("Problem on uploading projects, please check the file format.")
-        finally:
-            csv_file.close()
-    return HttpResponse("Upload completed succesfully.")
+    """Upload project data from csv into the database """
+    res = do_upload_projects_from_csv(request)
+    if (res == "Success"):
+        return HttpResponse("Oprtation completed succesfully.")
+    else:
+        return HttpResponse(f"Oprtation failed: {res}.")
+
+@login_required
+def define_highcharts(request):
+    return render(request, 'myworkspace/highcharts.html')
+
+def generate_highcharts(request):
+    charts = generate_highcharts_plot(request)
+    return render(request, 'myworkspace/highcharts.tmpl', {'charts': charts})
