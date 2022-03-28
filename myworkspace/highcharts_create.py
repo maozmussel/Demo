@@ -3,29 +3,35 @@ from pandas_highcharts.core import serialize
 from .models import Survey_responses_aggregate
 
 def create_and_define_dataframe(axis_name, **kwargs):
-    #fetch data into data model and set all relevant parameters
+    """Create a dataframe to the chart and set all its properties."""
+    # fetch data based on given parameters
     df = pd.DataFrame.from_records(
         Survey_responses_aggregate.objects.filter(**kwargs).values("option_value", "option_count"))
-        #Survey_responses_aggregate.objects.filter(survey_id=surveyid, question_id=4).values("option_value", "option_count"))
     if not df.empty:
+        # Define the coulmn the charrt will be based on and set it to be ordered
         df.set_index("option_value", inplace=True)
         df.sort_index(inplace=True)
+        # Define thee title of  the chart X-axis
         df.rename_axis(axis_name, axis="index", inplace=True)
     else:
         df = pd.DataFrame([])
     return df
 
-def generate_highcharts_plot():
-    surveyid = "4144303"
-    chart_type = "pie"
-    titles = ["Countries"]
-    questions = [4]
-    charts = []
+def generate_highcharts_plot(request):
+    """Generate few highcharts based on given parameters:
+           sid - the survey identifier
+           chart_type - the type of the chart
+    """
+    sid = request.POST.get('Survey', 0)
+    chart_type = request.POST.get('Type', "pie")
+    titles = ["Countries", "Ages", "Gender"]
+    questions = [4, 3, 8]
+    charts = ""
     for i in range(len(questions)):
-        df = create_and_define_dataframe(titles[i], survey_id=surveyid, question_id=questions[i])
+        df = create_and_define_dataframe(titles[i], survey_id=sid, question_id=questions[i])
         if not df.empty:
-            charts.append(serialize(df, render_to="survey_container", title=titles[i], kind=chart_type, legend=None))
-            print(charts[i])
+            charts += serialize(df, render_to=f"survey_container{i+1}", title=titles[i], kind=chart_type, legend=None)
         else:
-            charts.append("")
+            charts += ""
+
     return charts
