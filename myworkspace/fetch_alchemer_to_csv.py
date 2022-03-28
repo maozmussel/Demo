@@ -13,8 +13,8 @@ def fetch_survey_data_into_csv(output_file, from_date, to_date):
     client = SurveyGizmo(
         api_version='v5'
     )
-    client.config.api_token = "a99c37d10b08da6598bfd78934593189f6a6e847de5db36e70"
-    client.config.api_token_secret = "A9RT6oZACQ1r2"
+    client.config.api_token = ""
+    client.config.api_token_secret = ""
 
     try:
         # fetch the data into a json file
