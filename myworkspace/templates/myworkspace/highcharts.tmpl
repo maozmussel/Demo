@@ -9,13 +9,14 @@
 <form action="{% url 'generate_highcharts' %}" method="post">
 {% csrf_token %}
 <select name="Survey" id="Survey">  
-    <option value="4144303"> 4144303 </option>  
-    <option value="4156592"> 4156592 </option>  
+    <option value="4144303" {% if Survey == '4144303' %}selected{% endif %}> 4144303 </option>  
+    <option value="4156592" {% if Survey == '4156592' %}selected{% endif %}> 4156592 </option>  
+    <option value="1111111" {% if Survey == '1111111' %}selected{% endif %}> 1111111 </option>  
 </select>
 <select name="Type" id="Type">  
-    <option value="pie"> Pie </option>  
-    <option value="line"> Line </option>  
-    <option value="bar"> Bar </option>  
+    <option value="pie" {% if Type == 'pie' %}selected{% endif %}> Pie </option>  
+    <option value="line" {% if Type == 'line' %}selected{% endif %}> Line </option>  
+    <option value="bar" {% if Type == 'bar' %}selected{% endif %}> Bar </option>  
 </select>
 <input type="submit" value="Submit">
 </form>

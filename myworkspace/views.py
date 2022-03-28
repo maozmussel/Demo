@@ -93,5 +93,7 @@ def define_highcharts(request):
     return render(request, 'myworkspace/highcharts.html')
 
 def generate_highcharts(request):
-    charts = generate_highcharts_plot(request)
-    return render(request, 'myworkspace/highcharts.tmpl', {'charts': charts})
+    sid = request.POST.get('Survey', 0)
+    chart_type = request.POST.get('Type', "pie")
+    charts = generate_highcharts_plot(sid, chart_type)
+    return render(request, 'myworkspace/highcharts.tmpl', {'charts': charts, 'Survey': sid, 'Type': chart_type})

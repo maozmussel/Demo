@@ -17,13 +17,12 @@ def create_and_define_dataframe(axis_name, **kwargs):
         df = pd.DataFrame([])
     return df
 
-def generate_highcharts_plot(request):
+def generate_highcharts_plot(sid, chart_type):
     """Generate few highcharts based on given parameters:
            sid - the survey identifier
            chart_type - the type of the chart
     """
-    sid = request.POST.get('Survey', 0)
-    chart_type = request.POST.get('Type', "pie")
+    #Define list of question ids and titles for each of the  charts to be created
     titles = ["Countries", "Ages", "Gender"]
     questions = [4, 3, 8]
     charts = ""
