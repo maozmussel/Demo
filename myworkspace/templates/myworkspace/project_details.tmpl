@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Project Details</title>
+  </head>
+  <body>
+        {% if project.project_name %}
+   		<B>Project Name:</B> {{  project.project_name }} <BR>
+   		<B>Created Date:</B> {{ project.created_date }} <BR>
+          	<B>Survey Status:</B> {{ project.survey_status }} <BR>
+          	<B>Survey ID:</B> {{ project.survey_id }} <BR>
+        	<B>Survey URL:</B> {{ project.survey_url }} <BR>
+        	<B>Survey Type:</B> {{ project.survey_type }} <BR>
+        {% else  %}
+		<p>Project not found.</p>
+        {% endif %}
+  </body>
+</html>
+
+

@@ -1,0 +1,35 @@
+<html>
+    <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+  <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css">
+    </head>
+    <body>
+	<h2>Highcharts</h2>
+<body>
+<script type="module">
+  import Highcharts from 'https://code.highcharts.com/js/es-modules/masters/highcharts.src.js';
+
+//alert(window.location.origin + '/myworkspace/data.csv')
+Highcharts.chart('container', {
+    chart: {
+        type: 'column'
+    },
+    data: {
+        // enablePolling: true,
+        csvURL: 'data.csv'
+        //csvURL: window.location.origin + '/myworkspace/data.csv'
+    },
+    title: {
+        text: 'Fruit Consumption'
+    },
+    yAxis: {
+        title: {
+            text: 'Units'
+        }
+    }
+});
+</script>
+<div id="container"></div>
+    </body>
+</html>
