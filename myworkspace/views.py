@@ -92,8 +92,12 @@ def upload_projects_from_csv(request):
 def define_highcharts(request):
     return render(request, 'myworkspace/highcharts.html')
 
+@login_required
 def generate_highcharts(request):
-    sid = request.POST.get('Survey', 0)
-    chart_type = request.POST.get('Type', "pie")
-    charts = generate_highcharts_plot(sid, chart_type)
-    return render(request, 'myworkspace/highcharts.tmpl', {'charts': charts, 'Survey': sid, 'Type': chart_type})
+    if (is_member_in_group(request.user, constant.ADMIN_GROUP_NAME)):
+        sid = request.POST.get('Survey', 0)
+        chart_type = request.POST.get('Type', "pie")
+        charts = generate_highcharts_plot(sid, chart_type)
+        return render(request, 'myworkspace/highcharts.tmpl', {'charts': charts, 'Survey': sid, 'Type': chart_type})
+    else:
+        return HttpResponse("You do not have premissions for this operation.")

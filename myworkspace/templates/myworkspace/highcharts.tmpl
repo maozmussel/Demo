@@ -21,9 +21,22 @@
 <input type="submit" value="Submit">
 </form>
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<div id="survey_container1" style="height: 300px"></div>
-<div id="survey_container2" style="height: 300px"></div>
-<div id="survey_container3" style="height: 300px"></div>
+<div>
+  <div style="float:left">
+	<div id="survey_container1" style="height: 300px"></div>
+  </div>
+  <div style="float:left">
+	<div id="survey_container2" style="height: 300px"></div>
+  </div>
+</div>
+<div>
+  <div style="float:left">
+	<div id="survey_container3" style="height: 300px"></div>
+  </div>
+  <div style="float:left">
+	<div id="survey_container4" style="height: 300px"></div>
+  </div>
+</div>
 <script type="module">
 	{{ charts | safe }}
 </script>

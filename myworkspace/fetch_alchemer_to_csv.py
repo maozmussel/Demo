@@ -2,7 +2,9 @@ import os
 import json
 from surveygizmo import SurveyGizmo
 import pandas as pd
+import environ
 from .constant import constant
+from django.conf import settings
 
 def fetch_survey_data_into_csv(output_file, from_date, to_date):
     """Fetch data from Alchemer using REST API and save it as csv file
@@ -13,8 +15,11 @@ def fetch_survey_data_into_csv(output_file, from_date, to_date):
     client = SurveyGizmo(
         api_version='v5'
     )
-    client.config.api_token = ""
-    client.config.api_token_secret = ""
+    # reading .env file for getting system variables
+    env = environ.Env()
+    environ.Env.read_env(os.path.join(settings.BASE_DIR, '.env'))
+    client.config.api_token = env("API_KEY")
+    client.config.api_token_secret = env("API_SECRET_KEY")
 
     try:
         # fetch the data into a json file
