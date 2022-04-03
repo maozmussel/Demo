@@ -8,7 +8,7 @@ class FetchDataFromAlchemerTests(TestCase):
         """
         fetch_survey_data_into_csv() returns Success when all parameters given properly
         """
-        self.assertIs(fetch_survey_data_into_csv('/tmp/outputTest.csv', '2019-01-20', '2019-01-30'), 'Success')
+        self.assertIs(fetch_survey_data_into_csv('/tmp/outputTest.csv', '2019-01-20', '2019-01-30'), True)
 
     def test_wrong_file_path_given(self):
         """

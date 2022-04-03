@@ -1,4 +1,5 @@
 import logging
+import requests
 from django.http import HttpResponse
 from django.template import loader
 from django.http import Http404
@@ -65,12 +66,21 @@ def fetch_alchemer_data(request):
     file_name = request.POST['fname']
     from_date = request.POST['fromdate']
     to_date = request.POST['todate']
-    res = fetch_survey_data_into_csv(file_name, from_date, to_date)
-    if (res == "Success"):
-        return HttpResponse("Oprtation completed succesfully.")
+    try:
+        res = fetch_survey_data_into_csv(file_name, from_date, to_date)
+    except requests.exceptions.HTTPError:
+        return HttpResponse("Oprtation failed: problem connecting to Alchemer, please check the given date values are correct.")
+    except FileNotFoundError:
+        return HttpResponse("Oprtation failed: cannot open a file to write to.")
+    except PermissionError:
+        return HttpResponse("Oprtation failed: problem writing data to file.")
+    except (ValueError, OSError):
+        return HttpResponse("Oprtation failed: problem converting data into CSV file.")
+    except:
+        return HttpResponse("Oprtation failed")
     else:
-        return HttpResponse(f"Oprtation failed: {res}.")
-
+        if (res):
+            return HttpResponse("Oprtation completed succesfully.")
 
 @login_required
 def upload_project_form(request):
