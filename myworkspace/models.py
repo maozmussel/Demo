@@ -8,9 +8,19 @@ class Project(models.Model):
     survey_type = models.CharField(max_length=30, default='General')
     team = models.CharField(max_length=30, default=0)
     survey_status = models.CharField(max_length=30, default='')
+    project_status = models.CharField(max_length=10, default='Open')
 
     def __str__(self):
         return self.project_name
+
+class Project_statuses(models.Model):
+    status_id = models.IntegerField(primary_key=True)
+    status_name = models.CharField(max_length=10)
+
+ps = Project_statuses(1, 'Open')
+ps.save()
+ps = Project_statuses(2, 'Closed')
+ps.save()
 
 class Survey_responses_aggregate(models.Model):
     survey_id = models.IntegerField(default=0)
